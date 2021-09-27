@@ -4,7 +4,8 @@ import {
     postEdit,
     watch,
     getUpload,
-    postUpload
+    postUpload,
+    deleteVideo
 } from "../contorllers/videoController";
 
 const videoRouter = express.Router();
@@ -14,5 +15,6 @@ const videoRouter = express.Router();
 videoRouter.route("/upload").get(getUpload).post(postUpload);
 videoRouter.get("/:id([0-9a-f]{24})", watch);
 videoRouter.route("/:id([0-9a-f]{24})/edit").get(getEdit).post(postEdit);
+videoRouter.get("/:id([0-9a-f]{24})/delete", deleteVideo);
 // 문서에 의하면 몽고디비 id는 24바이트 16진수이며 24자리 str이다.: [0-9a-f]{24}
 export default videoRouter;
