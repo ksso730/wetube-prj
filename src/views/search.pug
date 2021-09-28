@@ -2,10 +2,16 @@ extends base
 include mixins/video.pug
 
 block content 
-    form(methos="POST")
+    form()
         input(placeholder="Search by title", type="text", name="keyword")
         input(type="submit", value="Search now")
 
-    dev
-        each video in videos
-            +video(video)
+    h2 Search Results
+    hr
+
+    if videos.length > 0
+        dev
+            each video in videos
+                +video(video)
+    else 
+        span Not found data. 
