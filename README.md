@@ -1,6 +1,7 @@
 # Wetube Project: Nomad Coder
 
 - express
-- nodeJS
+- nodeJS, ES6
+- mongo
 - PUG
 - webpack
