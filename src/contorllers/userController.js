@@ -1,6 +1,7 @@
 import User from "../models/User";
 import bcrypt from "bcrypt";
-import session from "express-session";
+import fetch from "node-fetch"
+
 
 export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
 export const postJoin = async(req, res) => {
@@ -72,3 +73,55 @@ export const postLogin = async(req, res) => {
 
 export const logout = (req, res) => res.send("logout User");
 export const see = (req, res) => res.send("See User");
+
+export const startGithubLogin = (req, res) => {
+    const baseUrl = `https://github.com/login/oauth/authorize`;
+    const config = {
+        client_id: "55a2b23d3ebd9040568a",
+        allow_signup: false,
+        scope: "read:user user:email"
+    }
+    const params = new URLSearchParams(config).toString();
+    const finalUrl = `${baseUrl}?${params}`;
+    return res.redirect(finalUrl);
+};
+
+// step 2. Users are redirected back to your site by GitHub
+export const finishGithubLogin = async(req, res)=> {
+    const baseUrl = `https://github.com/login/oauth/access_token`;
+    const config = {
+        client_id: process.env.GH_CLIENT,
+        client_secret: process.env.GH_SECRET,
+        code: req.query.code,
+    };
+    const params = new URLSearchParams(config).toString();
+    const finalUrl = `${baseUrl}?${params}`;
+    const tokenRequest = await (
+        await fetch(finalUrl, {
+            method:"POST",
+            headers: {
+                Accept: "application/json",
+            },
+        })
+    ).json();
+    // res.send(JSON.stringify(json));
+    // {"access_token":"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","token_type":"bearer","scope":"read:user,user:email"}
+
+    if("access_token" in tokenRequest){
+        const {access_token} = tokenRequest;
+        const userRequest = await (
+            await fetch("https://api.github.com/user",{
+                headers: {
+                    Authorization: `token ${access_token}`,
+                }
+            })  
+        ).json();
+        console.log(userRequest);
+    }else{
+        return res.redirect("/login");
+    }
+
+    //step3. Your app accesses the API with the user's access token
+};
+
+

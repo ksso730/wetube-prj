@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const videoSchema = new mongoose.Schema({
     // maxlength/minlength 는 html document에서도 제공하고 있어서, input옵션에 더해준다면 그이상 혹은 그 이하의 글자수를 미리 검사한다.
