@@ -1,5 +1,5 @@
 import express from "express";
-import {edit, remove, logout, see, startGithubLogin, finishGithubLogin} from "../contorllers/userController";
+import { edit, remove, logout, see, startGithubLogin, finishGithubLogin } from "../contorllers/userController";
 
 const userRouter = express.Router();
 

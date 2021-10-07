@@ -65,29 +65,39 @@ export const postLogin = async(req, res) => {
     };
     req.session.loggedIn = true;
     // session에 정보 추가
-    console.log(user);
     req.session.user = user;
 
     return res.redirect("/");
 };
 
-export const logout = (req, res) => res.send("logout User");
+export const logout = (req, res) => {
+    req.session.destroy();
+    return res.redirect("/");
+};
+
 export const see = (req, res) => res.send("See User");
 
 export const startGithubLogin = (req, res) => {
     const baseUrl = `https://github.com/login/oauth/authorize`;
     const config = {
-        client_id: "55a2b23d3ebd9040568a",
+        client_id: process.env.GH_CLIENT,
         allow_signup: false,
         scope: "read:user user:email"
+            //  read:user	Grants access to read a user's profile data.
+            //  user:email	Grants read access to a user's email addresses.
+            //  user:follow	Grants access to follow or unfollow other users.
     }
     const params = new URLSearchParams(config).toString();
     const finalUrl = `${baseUrl}?${params}`;
     return res.redirect(finalUrl);
+    // 인증이 완료되면 OAuth applicasdtion settings에 설정한 Authorization callback URL로 이동
+    // URL: users/github/finish
 };
 
 // step 2. Users are redirected back to your site by GitHub
-export const finishGithubLogin = async(req, res)=> {
+// >> users/github/finish
+export const finishGithubLogin = async(req, res) => {
+    // access_token 얻기
     const baseUrl = `https://github.com/login/oauth/access_token`;
     const config = {
         client_id: process.env.GH_CLIENT,
@@ -96,32 +106,65 @@ export const finishGithubLogin = async(req, res)=> {
     };
     const params = new URLSearchParams(config).toString();
     const finalUrl = `${baseUrl}?${params}`;
+    console.log(finalUrl);
     const tokenRequest = await (
         await fetch(finalUrl, {
-            method:"POST",
+            method: "POST",
             headers: {
                 Accept: "application/json",
             },
         })
     ).json();
-    // res.send(JSON.stringify(json));
-    // {"access_token":"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","token_type":"bearer","scope":"read:user,user:email"}
+    // = res.send(JSON.stringify(json));
+    // result : {"access_token":"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",
+    //           "token_type":"bearer","scope":"read:user,user:email"}
 
-    if("access_token" in tokenRequest){
-        const {access_token} = tokenRequest;
-        const userRequest = await (
-            await fetch("https://api.github.com/user",{
+    // access_token 으로 user정보를 가져온다.
+    if ("access_token" in tokenRequest) {
+        const { access_token } = tokenRequest;
+        const apiUrl = "https://api.github.com"
+        const userData = await (
+            await fetch(`${apiUrl}/user`, {
                 headers: {
                     Authorization: `token ${access_token}`,
                 }
-            })  
+            })
         ).json();
-        console.log(userRequest);
-    }else{
+        console.log(userData);
+
+        const emailData = await (
+            await fetch(`${apiUrl}/user/emails`, {
+                headers: {
+                    Authorization: `token ${access_token}`,
+                }
+            })
+        ).json();
+
+        // 접근권한 증명
+        const emailObj = emailData.find(
+            (email) => email.primary == true && email.verified == true
+        );
+        if (!emailObj) {
+            return res.redirect("/login");
+        }
+        let user = await User.findOne({ email: emailObj.email });
+        // 기존 이용자가 아니면, 비밀번호 없이 새로생성. socialOnly: true
+        if (!user) {
+            user = await User.create({
+                avatarUrl: userData.avatar_url,
+                name: userData.name,
+                username: userData.login,
+                email: emailObj.email,
+                password: "",
+                socialOnly: true,
+                location: userData.location,
+            });
+        }
+        req.session.loggedIn = true;
+        req.session.user = user;
+        return res.redirect("/");
+    } else {
         return res.redirect("/login");
     }
-
     //step3. Your app accesses the API with the user's access token
 };
-
-
