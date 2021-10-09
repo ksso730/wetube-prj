@@ -40,7 +40,46 @@ export const postJoin = async(req, res) => {
         });
     }
 }
-export const edit = (req, res) => res.send("Edit User");
+export const getEdit = (req, res) => {
+    return res.render("edit-profile", {pageTitle: "Edit Profile"});
+}
+
+
+export const postEdit = async(req, res) => {
+    const { 
+        session: {
+            user:{ 
+                _id,
+                // sessName: name,
+                // sessEmail: email,
+                // sessUserName: username,
+                // sessLocation: location
+             }
+        },
+        body: { name, email, username, location},
+        // !이미 있는 데이터라면? 업데이트 할 수없도록 해야한다.
+    } = req;
+
+    const updatedUser = await User.findByIdAndUpdate( 
+        _id, 
+        {
+            name, email, username, location
+        },
+        // new: true이면 업데이트 된 데이터를 가져온다. false이면 이전의 데이터.
+        { new: true }
+    );
+    // user 데이터는 업데이트 되었지만, session도 업데이트 해줘야한다.
+    const exists = await User.exists({ $or: [{ username }, { email }] });
+    req.session.user = updatedUser;
+
+    // 방법1 session update 
+    // req.session.user = {
+    //     // ...란 밖으로 꺼낸다는 의미. 업데이트하는 것 이외의 데이터는 이미 존재하는것들을 가져와서 넣어준다.
+    //     ...req.session.user,
+    //     name, email, username, location
+    // }
+    return res.redirect("/users/edit");
+}
 export const remove = (req, res) => res.send("Remove User");
 
 export const getLogin = (req, res) => res.render("login", { pageTitle: "Login" });
@@ -74,6 +113,15 @@ export const logout = (req, res) => {
     req.session.destroy();
     return res.redirect("/");
 };
+
+export const getChangePw = (req, res) => {
+    return res.render("change-password", {pageTitle: "Change Password"});
+}
+
+export const postChangePw = (req, res) => {
+    // send notification
+    return res.redirect("/users/my-profile");
+}
 
 export const see = (req, res) => res.send("See User");
 
@@ -130,7 +178,6 @@ export const finishGithubLogin = async(req, res) => {
                 }
             })
         ).json();
-        console.log(userData);
 
         const emailData = await (
             await fetch(`${apiUrl}/user/emails`, {
@@ -150,6 +197,7 @@ export const finishGithubLogin = async(req, res) => {
         let user = await User.findOne({ email: emailObj.email });
         // 기존 이용자가 아니면, 비밀번호 없이 새로생성. socialOnly: true
         if (!user) {
+            console.log(">>start");
             user = await User.create({
                 avatarUrl: userData.avatar_url,
                 name: userData.name,
@@ -160,11 +208,11 @@ export const finishGithubLogin = async(req, res) => {
                 location: userData.location,
             });
         }
+        console.log(">>end");
         req.session.loggedIn = true;
         req.session.user = user;
-        return res.redirect("/");
+        return res.redirect("/");  
     } else {
         return res.redirect("/login");
     }
-    //step3. Your app accesses the API with the user's access token
 };

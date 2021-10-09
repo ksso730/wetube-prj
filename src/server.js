@@ -39,6 +39,9 @@ app.use(
 // });
 
 app.use(localsMiddleware);
+app.use("/uploads", express.static("uploads"));
+// asset 폴더 안을 열람할수 있게 해주세요 url: /static, dir: assets (둘다 같은이름일 필요는 없음)
+app.use("/static", express.static("assets"));
 app.use("/", rootRouter);
 app.use("/users", userRouter);
 app.use("/videos", videoRouter);
