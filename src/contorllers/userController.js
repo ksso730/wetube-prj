@@ -50,14 +50,10 @@ export const postEdit = async(req, res) => {
         session: {
             user:{ 
                 _id,
-                // sessName: name,
-                // sessEmail: email,
-                // sessUserName: username,
-                // sessLocation: location
              }
         },
         body: { name, email, username, location},
-        // !이미 있는 데이터라면? 업데이트 할 수없도록 해야한다.
+        // !이미 있는 데이터라면? 업데이트 할 수없도록 해야한다. (숙제)
     } = req;
 
     const updatedUser = await User.findByIdAndUpdate( 
@@ -115,12 +111,34 @@ export const logout = (req, res) => {
 };
 
 export const getChangePw = (req, res) => {
+    if(req.session.user.socialOnly == true){
+        return res.redirect("/");
+    }
     return res.render("change-password", {pageTitle: "Change Password"});
 }
 
-export const postChangePw = (req, res) => {
-    // send notification
-    return res.redirect("/users/my-profile");
+export const postChangePw = async(req, res) => {
+    const {
+        session: {
+            user:{ _id }
+        },
+        body: { oldPw, newPw, newPwConfirm }
+    } = req;
+    
+    const user = await User.findById(_id);
+    const ok = await bcrypt.compare(oldPw, user.password);
+
+    if(!ok){
+        return res.status(400).render("change-password", {pageTitle: "Change Password", errorMsg: "The current passwork is incorrect."});
+    }
+
+    if(newPw!=newPwConfirm){
+        return res.status(400).render("change-password", {pageTitle: "Change Password", errorMsg: "The new password does not match the confirmation"});
+    } 
+    user.password = newPw;
+    await user.save();
+
+    return res.redirect("/users/logout");
 }
 
 export const see = (req, res) => res.send("See User");
