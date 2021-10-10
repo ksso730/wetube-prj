@@ -1,4 +1,5 @@
 import User from "../models/User";
+import Video from "../models/Video";
 import bcrypt from "bcrypt";
 import fetch from "node-fetch"
 
@@ -49,21 +50,25 @@ export const postEdit = async(req, res) => {
     const { 
         session: {
             user:{ 
-                _id,
+                _id, avatarUrl
              }
         },
         body: { name, email, username, location},
         // !이미 있는 데이터라면? 업데이트 할 수없도록 해야한다. (숙제)
+        file,
     } = req;
 
     const updatedUser = await User.findByIdAndUpdate( 
         _id, 
         {
+            // file 의 존재여부를 확인
+            avatarUrl: file? file.path : avatarUrl,
             name, email, username, location
         },
         // new: true이면 업데이트 된 데이터를 가져온다. false이면 이전의 데이터.
         { new: true }
     );
+    console.log(avatarUrl);
     // user 데이터는 업데이트 되었지만, session도 업데이트 해줘야한다.
     const exists = await User.exists({ $or: [{ username }, { email }] });
     req.session.user = updatedUser;
@@ -141,7 +146,15 @@ export const postChangePw = async(req, res) => {
     return res.redirect("/users/logout");
 }
 
-export const see = (req, res) => res.send("See User");
+export const seeProfile = async(req, res) => {
+    const {id} = req.params;
+    const user = await User.findById(id).populate("videos");
+    if(!user){
+        return res.status(400).render("404", {pageTitle: "User not found."});
+    }
+
+    return res.render("users/profile", {pageTitle: user.name, user});
+}
 
 export const startGithubLogin = (req, res) => {
     const baseUrl = `https://github.com/login/oauth/authorize`;
@@ -172,7 +185,6 @@ export const finishGithubLogin = async(req, res) => {
     };
     const params = new URLSearchParams(config).toString();
     const finalUrl = `${baseUrl}?${params}`;
-    console.log(finalUrl);
     const tokenRequest = await (
         await fetch(finalUrl, {
             method: "POST",
@@ -215,7 +227,6 @@ export const finishGithubLogin = async(req, res) => {
         let user = await User.findOne({ email: emailObj.email });
         // 기존 이용자가 아니면, 비밀번호 없이 새로생성. socialOnly: true
         if (!user) {
-            console.log(">>start");
             user = await User.create({
                 avatarUrl: userData.avatar_url,
                 name: userData.name,
@@ -226,7 +237,6 @@ export const finishGithubLogin = async(req, res) => {
                 location: userData.location,
             });
         }
-        console.log(">>end");
         req.session.loggedIn = true;
         req.session.user = user;
         return res.redirect("/");  

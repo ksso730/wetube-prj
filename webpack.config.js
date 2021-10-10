@@ -16,7 +16,7 @@ module.exports = {
     mode: "development",
     output: {
         // 처리한 comopressed javacript 파일들이 저장될 위치 ~/assets/js
-        // name에 각 entry 값을 별개로 넣어줄수있음
+        // name에 각 entry 위치를 별개로 넣어줄수있음
         filename: "js/[name].js",
         path: path.resolve(__dirname, "assets"),
         // 파일명 등을 변경 할때 원래것은 삭제하고 바꿔줌
