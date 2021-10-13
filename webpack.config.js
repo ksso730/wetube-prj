@@ -8,7 +8,8 @@ module.exports = {
     // 우리가 처리하고싶은 파일 main.js
     entry: {
         main: "./src/client/js/main.js",
-        videoPlayer: "./src/client/js/videoPlayer.js"
+        videoPlayer: "./src/client/js/videoPlayer.js",
+        recorder : "./src/client/js/recorder.js",
     },
     // npm run assets 를 백엔드와 같이 계속 실행시켜둔다. css 바뀔때마다 재시작할 필요없음
     watch: true,
