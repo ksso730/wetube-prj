@@ -5,7 +5,6 @@ export const localsMiddleware = (req, res, next) => {
     res.locals.loggedIn = Boolean(req.session.loggedIn);
     // user가 undefined일때
     res.locals.loggedInUser = req.session.user || {};
-    console.log(req.session.user);
     next();
 }
 
@@ -14,6 +13,7 @@ export const protectorMiddleware = (req, res, next) => {
     if(req.session.loggedIn){
         return next();
     }else{
+        req.flash("error", "Not authorized");
         return res.redirect("/login");
     }
 }
@@ -24,6 +24,7 @@ export const publicOnlyMiddleware = (req, res, next) => {
         return next();
     }else{
         // 로그인 상태에서는 login, join페이지에 접속하지 못한다.
+        req.flash("error", "Not authorized");
         return res.redirect("/");
     }
 }

@@ -68,7 +68,6 @@ export const postEdit = async(req, res) => {
         // new: true이면 업데이트 된 데이터를 가져온다. false이면 이전의 데이터.
         { new: true }
     );
-    console.log(avatarUrl);
     // user 데이터는 업데이트 되었지만, session도 업데이트 해줘야한다.
     const exists = await User.exists({ $or: [{ username }, { email }] });
     req.session.user = updatedUser;
@@ -112,11 +111,13 @@ export const postLogin = async(req, res) => {
 
 export const logout = (req, res) => {
     req.session.destroy();
+    req.flash("info", "Bye Bye");
     return res.redirect("/");
 };
 
 export const getChangePw = (req, res) => {
     if(req.session.user.socialOnly == true){
+        req.flash("error", "Can't change password.");
         return res.redirect("/");
     }
     return res.render("change-password", {pageTitle: "Change Password"});
@@ -150,10 +151,11 @@ export const seeProfile = async(req, res) => {
     const {id} = req.params;
     const user = await User.findById(id).populate("videos");
     if(!user){
+        req.flash("error", "Not authorized.");
         return res.status(400).render("404", {pageTitle: "User not found."});
     }
 
-    return res.render("users/profile", {pageTitle: user.name, user});
+    return res.render("users/profile", {pageTitle: `${user.name} 's room`, user});
 }
 
 export const startGithubLogin = (req, res) => {

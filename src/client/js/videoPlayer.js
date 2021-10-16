@@ -26,7 +26,6 @@ const handlePlayClick = (e) => {
 const handleSpacebar = (e) => {
     let keyCode = e.which ;
     if( keyCode === 32){
-        console.log(keyCode);
         handleClick(e);
     }
 }
@@ -86,7 +85,6 @@ const handleTimelineChange = (e) => {
 
 const handleFullScreen = () => {
     const fullScreen = document.fullscreenElement;
-    console.log(fullScreen);
     if(fullScreen){
         document.exitFullscreen();
         fullScreenIcon.classList = "fas fa-expand";

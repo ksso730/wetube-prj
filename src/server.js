@@ -7,7 +7,7 @@ import session from "express-session"
 import { localsMiddleware } from "./middlewares";
 import MongoStore from "connect-mongo";
 import apiRouter from "./routers/apiRouter";
-
+import flash from "express-flash";
 
 const app = express();
 const logger = morgan("dev");
@@ -16,6 +16,7 @@ app.set("view engine", "pug");
 app.set("views", process.cwd() + "/src/views");
 app.use(logger);
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // session 미들웨어가 서버에 text를 보낸다.
 app.use(
@@ -39,6 +40,8 @@ app.use(
 //     return res.send(`${req.session.id} ${req.session.potato}`);
 // });
 
+// messages.locals 를 만들어 준다.
+app.use(flash());
 app.use(localsMiddleware);
 app.use("/uploads", express.static("uploads"));
 // asset 폴더 안을 열람할수 있게 해주세요 url: /static, dir: assets (둘다 같은이름일 필요는 없음)

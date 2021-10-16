@@ -1,6 +1,7 @@
 extends base
 
 block content
+    //- js의 dataset 으로 값을 가져올 수 있다.
     div#videoContainer(data-id=video._id)
         video(src="/" + video.fileUrl)
         div#videoControls.videoControls
@@ -21,16 +22,32 @@ block content
                     i.fas.fa-expand
 
 
-    //- div
-    //-     p=video.description
-    //-     small=video.createdAt
-    //- div
-    //-     small Uploaded by
-    //-         a(href=`/users/${video.owner.id}`) .&nbsp; #{video.owner.name}
-    //- if String(video.owner._id) === String(loggedInUser._id) 
-    //-     a(href=`${video.id}/edit`) Edit Video &rarr;
-    //-     br
-    //-     a(href=`${video.id}/delete`) Delete Video &rarr;
+    div.video__data
+        p.video__title=video.title
+        small.video__owner Uploaded by
+            a(href=`/users/${video.owner._id}`)=video.owner.name
+        small.video__createdAt=new Date(video.createdAt).toLocaleDateString("ko-kr", {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})
+        if String(video.owner._id) === String(loggedInUser._id) 
+            a(href=`${video.id}/edit`) Edit Video &rarr;
+            br
+            a(href=`${video.id}/delete`) Delete Video &rarr;
+    
+    if loggedIn
+        div.video__add-comments
+            form.video__comment-form#commentForm
+                textarea(cols="30", rows="10", placeholder="Write comment...") 
+                button Add Comment
+    dev.video__comments
+        ul 
+            each comment in video.comments
+                li.video__comment
+                    i.fas.fa-comment
+                    span #{comment.text}
+                    //- 댓글을 작성하지 않은 사람에게는 숨겨야한다.
+                    if String(comment._id) === String(loggedInUser._id) 
+                        span ❌
 
 block scripts 
     script(src="/static/js/videoPlayer.js")
+    if loggedIn
+        script(src="/static/js/commentSection.js")

@@ -1,6 +1,8 @@
 import { render } from "pug";
+import { async } from "regenerator-runtime";
 import User from "../models/User";
 import Video from "../models/Video";
+import Comment from "../models/Comment";
 
 // export const home = async (req, res) => {
 //     Video.find({}, (error, videos) => {
@@ -16,7 +18,9 @@ export const home = async(req, res) => {
 export const watch = async(req, res) => {
     const { id } = req.params;
     // populate("owner") : owner로 포함한 User 정보를 모두 가져온다.
-    const video = await Video.findById(id).populate("owner");
+    const video = await Video.findById(id).populate("owner").populate("comments");
+    // console.log(video);
+
     if (!video) {
         return res.render("404", { pageTitle: "Video not found." });
     }
@@ -50,6 +54,7 @@ export const postEdit = async(req, res) => {
     }
 
     if(String(video.owner) !== String(_id)){
+        req.flash("error", "Not authorized");
         return res.status(403).redirect("/");
     }
 
@@ -136,3 +141,28 @@ export const registerView = async (req, res) => {
     video.save();
     return res.sendStatus(200);
 }
+
+export const createComment = async(req, res) => {
+    const {
+        session: { user },
+        body: { text },
+        params: { id },
+      } = req;
+      const video = await Video.findById(id);
+      if (!video) {
+        return res.sendStatus(404);
+      }
+      const comment = await Comment.create({
+        text,
+        owner: user._id,
+        video: id,
+      });
+      video.comments.push(comment._id);
+      video.save();
+      // 사용자가 만든 댓글을 바로 삭제할 수 있도록 . 해당 id 를 바로 보내준다.
+      return res.status(201).json({ newCommentId: comment._id });
+}
+
+// 삭제 컨트롤러 만들기
+// 동일하게 fetch로 만들어서 url을 comment id 를 파라미터로 삭제할 수 있도록 한다.
+// 보안체크는 html에서 본인작성이 아니면 숨기고, 백엔드에서도 삭제할때 로그인 유저와 다르면 삭제할 수없도록.

@@ -1,15 +1,18 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
+const BASE_JS = "./src/client/js/"
+
 module.exports = {
     plugins: [new MiniCssExtractPlugin({
         filename: "css/styles.css"
     })],
     // 우리가 처리하고싶은 파일 main.js
     entry: {
-        main: "./src/client/js/main.js",
-        videoPlayer: "./src/client/js/videoPlayer.js",
-        recorder : "./src/client/js/recorder.js",
+        main: BASE_JS + "main.js",
+        videoPlayer: BASE_JS + "videoPlayer.js",
+        recorder : BASE_JS + "recorder.js",
+        commentSection: BASE_JS + "commentSection.js"
     },
     // npm run assets 를 백엔드와 같이 계속 실행시켜둔다. css 바뀔때마다 재시작할 필요없음
     watch: true,

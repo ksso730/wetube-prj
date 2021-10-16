@@ -60,7 +60,7 @@ main {
   padding: 10px 20px;
   border-radius: 10000px;
   text-align: center;
-  animation: goAway 0.5s ease-in-out forwards;
+  animation: goAway .5s ease-in-out forwards;
   animation-delay: 5s;
   &.error {
     background-color: tomato;
