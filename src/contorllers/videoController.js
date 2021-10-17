@@ -19,7 +19,6 @@ export const watch = async(req, res) => {
     const { id } = req.params;
     // populate("owner") : owner로 포함한 User 정보를 모두 가져온다.
     const video = await Video.findById(id).populate("owner").populate("comments");
-    // console.log(video);
 
     if (!video) {
         return res.render("404", { pageTitle: "Video not found." });
