@@ -14,10 +14,10 @@ module.exports = {
         recorder : BASE_JS + "recorder.js",
         commentSection: BASE_JS + "commentSection.js"
     },
-    // npm run assets 를 백엔드와 같이 계속 실행시켜둔다. css 바뀔때마다 재시작할 필요없음
-    watch: true,
-    // development || production
-    mode: "development",
+// npm run assets 를 백엔드와 같이 계속 실행시켜둔다. css 바뀔때마다 재시작할 필요없음
+    // watch: true,
+// development || production
+    // mode: "development",
     output: {
         // 처리한 comopressed javacript 파일들이 저장될 위치 ~/assets/js
         // name에 각 entry 위치를 별개로 넣어줄수있음
