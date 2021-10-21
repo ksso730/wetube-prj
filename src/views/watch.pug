@@ -1,10 +1,9 @@
 extends base
 
 block content
-    //- js의 dataset 으로 값을 가져올 수 있다.
     div#videoContainer(data-id=video._id)
         video(src="/" + video.fileUrl)
-        div#videoControls.videoControls
+        div#videoControls
             div.videoControls__play
                 span#play.videoConrols__playBtn 
                     i.fas.fa-play 
@@ -12,40 +11,50 @@ block content
                 span#currenTime 00:00
                 span  / 
                 span#totalTime 00:00
-            input(type="range", step="1", value="0", min="0")#timeline.videoControls__timeline
-            div.videoControls__volume
-                input(type="range", step="0.1", value="0.5", min="0", max="1")#volume
-                span#mute
-                    i.fas.fa-volume-up
-            div
-                span#fullScreen
-                    i.fas.fa-expand
+            div.play__right
+                input(type="range", step="1", value="0", min="0")#timeline.videoControls__timeline
+                div.videoControls__volume
+                    input(type="range", step="0.1", value="0.5", min="0", max="1")#volume
+                    span#mute
+                        i.fas.fa-volume-up
+                div
+                    span#fullScreen.fullScreen
+                        i.fas.fa-expand
 
 
     div.video__data
-        p.video__title=video.title
-        small.video__owner Uploaded by
+        h1.video__title=video.title
+        div.video__owner Uploaded by
             a(href=`/users/${video.owner._id}`)=video.owner.name
-        small.video__createdAt=new Date(video.createdAt).toLocaleDateString("ko-kr", {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})
+        small.video__createdAt=new Date(video.createdAt).toLocaleDateString("ko-kr")
+        //- , {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})
+        
         if String(video.owner._id) === String(loggedInUser._id) 
             a(href=`${video.id}/edit`) Edit Video &rarr;
             br
             a(href=`${video.id}/delete`) Delete Video &rarr;
     
+    hr
+
     if loggedIn
         div.video__add-comments
+            h3 Write comment
             form.video__comment-form#commentForm
-                textarea(cols="30", rows="10", placeholder="Write comment...") 
+                textarea(cols="30", rows="10") 
                 button Add Comment
+
     dev.video__comments
-        ul 
+        h3.title__comments Comments
+        ul.ul__comments
             each comment in video.comments
                 li.video__comment
                     i.fas.fa-comment
                     span #{comment.text}
                     //- 댓글을 작성하지 않은 사람에게는 숨겨야한다.
-                    if String(comment._id) === String(loggedInUser._id) 
-                        span ❌
+                    if String(comment.owner._id) == String(loggedInUser._id) 
+                        span.del__comment ❌
+                    small.comment__createAt=new Date(comment.createAt).toLocaleDateString("ko-kr")
+                    
 
 block scripts 
     script(src="/static/js/videoPlayer.js")

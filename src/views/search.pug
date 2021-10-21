@@ -2,10 +2,13 @@ extends base
 include mixins/video.pug
 
 block content 
-    form()
-        input(placeholder="Search by title", type="text", name="keyword")
-        input(type="submit", value="Search now")
-
+    div#form__container
+        form()
+            input(placeholder="Search by title", type="text", name="keyword")
+            input(type="submit", value="Search now")
+    br
+    br
+    br
     h2 Search Results
     hr
 

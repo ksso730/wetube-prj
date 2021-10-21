@@ -1,6 +1,11 @@
+
 header
     a(href="/").header__logo
         i.fab.fa-youtube
+        span.header__txt SyTube
+    div.my__profile
+        if loggedIn
+            span Welcome #{loggedInUser.name} 💖
     nav 
         ul
             li
@@ -15,10 +20,9 @@ header
                     a(href="/users/edit") Edit Profile
                 li 
                     a(href="/users/logout") Log out
-                li 
-                    a(href="/my-profile") #{loggedInUser.name}의 Profile
             else
                 li 
                     a(href="/join") Join
                 li 
                     a(href="/login") Log in
+hr

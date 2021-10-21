@@ -1,45 +1,98 @@
-form {
-  max-width: 420px;
-  margin: 0 auto;
-  &:not(.search__form) {
-    padding: 30px;
-    background-color: rgba($color: $bg, $alpha: 0.7);
-    border-radius: 10px;
-    border: 1px solid rgba($color: #fff, $alpha: 0.1);
-  }
+
+.error__message {
+    display: flex;
+    color: #d43e2a;
+    margin-bottom: 15px;
+    justify-content: center;
 }
 
-input:not(input[type="range"]),
-input[type="submit"] {
-  all: unset;
-  padding: 15px 20px;
-  border-radius: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: black;
-  margin-bottom: 5px;
-  font-size: 16px;
-  color: white;
-  width: 90%;
-  &::placeholder {
-    color: rgba(255, 255, 255, 0.7);
-  }
-}
+#form__container {
+    margin: 0 auto;
+    width: 50%;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+    position: relative;
+    input[type=text], select, [type=password] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+        width: 100%;
+        background-color: #3a3a3a;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+        background-color: #131313;
+    }
 
-input[type="submit"],
-.social__btn {
-  border-radius: 5px;
-  padding: 12px 20px;
-  background-color: white !important;
-  color: rgba($color: $red, $alpha: 1) !important;
-  text-align: center !important;
-  cursor: pointer;
-  display: block;
-  border: none;
-  &:focus {
-    outline: none;
-  }
-  &:disabled {
-    opacity: 0.5;
-    pointer-events: none;
-  }
+    label{
+        display: inline-block;
+        padding: .5em .55em; 
+        color: rgb(243, 243, 243); font-size: inherit;
+        line-height: normal;
+        vertical-align: middle;
+        background-color: #52a180;
+        cursor: pointer;
+        border: 1px solid #ebebeb;
+        border-bottom-color: #e2e2e2;
+        border-radius: .5em;
+    }
+
+    input[type="file"] {
+        position: absolute;
+        width: 0;
+        height: 0;
+        padding: 0;
+        overflow: hidden;
+        border: 0;
+    }
+
+    .upload__name {
+        display: inline-block;
+        height: 40px;
+        padding: 0 10px;
+        vertical-align: middle;
+        border: 1px solid #dddddd;
+        width: 70%;
+        color: #999999;
+        border-radius: .5em;
+        margin-right: 10px;
+        
+    }
+
+    .redirect__btn {
+        display: block;
+        position: absolute;
+        margin-top: 30px;
+        color: rgb(31, 149, 155);
+        right: 0;
+        display: flex;
+        justify-content: space-between;
+        width: 40%;
+    }
+    
+    .githublogin:hover {
+        color: rgb(41, 97, 100);
+    }
+    .joinnow:hover {
+        color: rgb(41, 97, 100);
+    }
+    .login:hover {
+        color: rgb(41, 97, 100);
+    }
+    
+
 }

@@ -26,6 +26,7 @@ const handlePlayClick = (e) => {
 const handleSpacebar = (e) => {
     let keyCode = e.which ;
     if( keyCode === 32){
+        e.preventDefault();
         handleClick(e);
     }
 }

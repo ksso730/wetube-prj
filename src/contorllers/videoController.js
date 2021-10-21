@@ -23,6 +23,7 @@ export const watch = async(req, res) => {
     if (!video) {
         return res.render("404", { pageTitle: "Video not found." });
     }
+    video.comments.reverse();
     return res.render("watch", { pageTitle: video.title, video });
 };
 

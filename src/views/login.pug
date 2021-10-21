@@ -1,14 +1,15 @@
 extends base
 block content 
-    if errorMessage
-        span=errorMessage
-    form(method="POST")
-        input(placeholder="Username", name="username", type="text", required) 
-        input(placeholder="Password", name="password", type="password", required)
-        input(type="submit", value="Log in")
-        br
-        a(href="/users/github/start") Continue with Github. &rarr;
-    hr
-    div 
-        span Don't have an account?
-        a(href="/join") Create one Now &rarr;
+    if errorMsg
+        span.error__message=errorMsg
+    div#form__container
+        form(method="POST")
+            input(placeholder="Username", name="username", type="text", required) 
+            input(placeholder="Password", name="password", type="password", required)
+            input(type="submit", value="Log in")
+            br
+
+        hr
+        div.redirect__btn
+            a(href="/users/github/start").githublogin Login with Github. 👉
+            a(href="/join").joinnow Join Now 👉
