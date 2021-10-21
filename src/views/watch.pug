@@ -49,11 +49,11 @@ block content
             each comment in video.comments
                 li.video__comment
                     i.fas.fa-comment
-                    span #{comment.text}
+                    span.txt__comment #{comment.text}
                     //- 댓글을 작성하지 않은 사람에게는 숨겨야한다.
-                    if String(comment.owner._id) == String(loggedInUser._id) 
-                        span.del__comment ❌
                     small.comment__createAt=new Date(comment.createAt).toLocaleDateString("ko-kr")
+                    if String(comment.owner._id) === String(loggedInUser._id) 
+                        span.del__comment ❌
                     
 
 block scripts 

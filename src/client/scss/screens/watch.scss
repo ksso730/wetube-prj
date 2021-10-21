@@ -89,10 +89,11 @@ ul li {
   list-style: none;
 }
 
-.del__comment{
-  margin : 0 5px;
+.txt__comment .del__comment{
+  margin-right : 0 5px;
 }
 
 .comment__createAt {
   color: rgb(153, 153, 153);
+  margin: 0 5px;
 }
