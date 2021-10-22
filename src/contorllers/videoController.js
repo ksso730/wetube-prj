@@ -163,6 +163,9 @@ export const createComment = async(req, res) => {
       return res.status(201).json({ newCommentId: comment._id });
 }
 
-// 삭제 컨트롤러 만들기
-// 동일하게 fetch로 만들어서 url을 comment id 를 파라미터로 삭제할 수 있도록 한다.
-// 보안체크는 html에서 본인작성이 아니면 숨기고, 백엔드에서도 삭제할때 로그인 유저와 다르면 삭제할 수없도록.
+export const deleteComment = async(req, res) => {
+    const {id} = req.params;
+    await Comment.findByIdAndDelete(id);
+
+    return res.status(201).json({ delCommentId: id});
+};

@@ -1,6 +1,9 @@
+import { async } from "regenerator-runtime";
+
 const videoContainer=  document.getElementById("videoContainer");
 const form = document.getElementById("commentForm");
-const txtArea = form.querySelector("textarea");
+const videoComments = document.getElementById("videoComments");
+const delBtnList = videoComments.querySelectorAll("li > span:last-child");
 
 const addComment = (text, id) => {
     const videoComments = document.querySelector(".video__comments ul");
@@ -20,12 +23,27 @@ const addComment = (text, id) => {
     const span2 = document.createElement("span"); 
     span2.innerText = "❌";
     span2.className = "del__comment";
+    span2.dataset.id = id;
+    span2.addEventListener("click", handleDeleteComment);
     newComment.appendChild(icon);
     newComment.appendChild(span);
     newComment.appendChild(date);
     newComment.appendChild(span2);
-    // 댓글의 맨 위에 추가
     videoComments.prepend(newComment);
+}
+
+
+const delComment = (id) => {
+    const list = videoComments.querySelectorAll("li");
+    let comm;
+    for(let i =0; i<list.length; i++){
+        comm = list[i];
+        if (id === comm.dataset.id){
+            console.log(comm);
+            // videoComments.remove(comm);
+            comm.remove();
+        }
+    }
 }
 
 const handleSubmit = async(e) => {
@@ -39,11 +57,6 @@ const handleSubmit = async(e) => {
     }
     const response = await fetch(`/api/videos/${id}/comment`, {
         method: "POST",
-        // 1. req.body 와 같음
-        // app.use(express.text()) : text를 허용해줘야 한다. (server.js)
-        // object를 보내려면 JSON.stringify
-        // string->js object로 바꿔주는 middleware를 사용해야한다. 
-        // header정보도 필수!!
         headers: {
             "Content-Type": "application/json"
         },
@@ -56,8 +69,31 @@ const handleSubmit = async(e) => {
     }
 }
 
+const handleDeleteComment = async(e) => {
+    const id = e.target.dataset.id;
+    console.log(id);
+    const response = await fetch(`/api/comments/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    if(response.status===201){
+        const {delCommentId} = await response.json();
+        delComment(delCommentId);
+    }
+}
+
+// 삭제 컨트롤러 만들기
+// 동일하게 fetch로 만들어서 url을 comment id 를 파라미터로 삭제할 수 있도록 한다.
+// 보안체크는 html에서 본인작성이 아니면 숨기고, 백엔드에서도 삭제할때 로그인 유저와 다르면 삭제할 수없도록.
+
 if(form){
     form.addEventListener("submit", handleSubmit);
 }
+
+delBtnList.forEach(item => {
+    item.addEventListener("click", handleDeleteComment);
+})
 
     

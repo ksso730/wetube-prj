@@ -1,9 +1,10 @@
 mixin video(video)
     div 
-        h2
+        div.video__title
             a(href=`/videos/${video.id}` )=video.title
+        small 👀 #{video.meta.views} views ::
         small=video.createdAt.toLocaleDateString("ko-kr", {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})
-        p=video.description
+        //- p=video.description
         ul
             each hashtag in video.hashtags
                 li=hashtag 
