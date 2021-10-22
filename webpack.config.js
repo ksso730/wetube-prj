@@ -11,7 +11,8 @@ module.exports = {
     entry: {
         main: BASE_JS + "main.js",
         videoPlayer: BASE_JS + "videoPlayer.js",
-        commentSection: BASE_JS + "commentSection.js"
+        commentSection: BASE_JS + "commentSection.js",
+        upload: BASE_JS + "upload.js"
     },
 // npm run assets 를 백엔드와 같이 계속 실행시켜둔다. css 바뀔때마다 재시작할 필요없음
     // watch: true,

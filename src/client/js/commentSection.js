@@ -1,5 +1,6 @@
 const videoContainer=  document.getElementById("videoContainer");
 const form = document.getElementById("commentForm");
+const txtArea = form.querySelector("textarea");
 
 const addComment = (text, id) => {
     const videoComments = document.querySelector(".video__comments ul");
@@ -12,10 +13,16 @@ const addComment = (text, id) => {
     icon.className = "fas fa-comment";
     const span = document.createElement("span");
     span.innerText = ` ${text}`;
+    span.className = "txt__comment";
+    const date = document.createElement("small"); 
+    date.innerText = new Date(Date.now()).toLocaleDateString("ko-kr");
+    date.className = "comment__createAt";
     const span2 = document.createElement("span"); 
     span2.innerText = "❌";
+    span2.className = "del__comment";
     newComment.appendChild(icon);
     newComment.appendChild(span);
+    newComment.appendChild(date);
     newComment.appendChild(span2);
     // 댓글의 맨 위에 추가
     videoComments.prepend(newComment);
@@ -52,4 +59,5 @@ const handleSubmit = async(e) => {
 if(form){
     form.addEventListener("submit", handleSubmit);
 }
+
     

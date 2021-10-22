@@ -14,6 +14,9 @@ const fullScreenIcon = fullScreenBtn.querySelector("i");
 const videoContainer = document.getElementById("videoContainer");
 const videoControls = document.getElementById("videoControls");
 
+const form = document.getElementById("commentForm");
+const txtArea = form.querySelector("textarea");
+
 let controlsTimeout = null;
 let controlsMovementTimeout = null;
 let volumeValue = 0.5;
@@ -25,7 +28,10 @@ const handlePlayClick = (e) => {
 
 const handleSpacebar = (e) => {
     let keyCode = e.which ;
-    if( keyCode === 32){
+    const txtFocused = txtArea===document.activeElement;
+    if( !txtFocused && keyCode === 32){
+        console.log(txtArea===document.activeElement);
+        console.log(keyCode);
         e.preventDefault();
         handleClick(e);
     }
