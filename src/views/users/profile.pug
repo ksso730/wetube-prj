@@ -3,6 +3,7 @@ include ../mixins/video
 
 block content
     h1=pageTitle
+    img(src="/"+ loggedInUser.avatarUrl, width="200", height="200")
     ul
         each video in user.videos
            +video(video)

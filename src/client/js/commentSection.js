@@ -39,8 +39,6 @@ const delComment = (id) => {
     for(let i =0; i<list.length; i++){
         comm = list[i];
         if (id === comm.dataset.id){
-            console.log(comm);
-            // videoComments.remove(comm);
             comm.remove();
         }
     }
@@ -71,7 +69,6 @@ const handleSubmit = async(e) => {
 
 const handleDeleteComment = async(e) => {
     const id = e.target.dataset.id;
-    console.log(id);
     const response = await fetch(`/api/comments/${id}`, {
         method: "DELETE",
         headers: {
@@ -83,10 +80,6 @@ const handleDeleteComment = async(e) => {
         delComment(delCommentId);
     }
 }
-
-// 삭제 컨트롤러 만들기
-// 동일하게 fetch로 만들어서 url을 comment id 를 파라미터로 삭제할 수 있도록 한다.
-// 보안체크는 html에서 본인작성이 아니면 숨기고, 백엔드에서도 삭제할때 로그인 유저와 다르면 삭제할 수없도록.
 
 if(form){
     form.addEventListener("submit", handleSubmit);

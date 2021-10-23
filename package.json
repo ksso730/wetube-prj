@@ -13,7 +13,7 @@
         "build:assets": "webpack --mode=production",
         "dev:server": "nodemon",
         "dev:assets": "webpack --mode=development -w"
-      },
+    },
     "author": "Suyn",
     "license": "ISC",
     "bugs": {
@@ -24,15 +24,20 @@
         "@ffmpeg/core": "^0.10.0",
         "@ffmpeg/ffmpeg": "^0.10.1",
         "bcrypt": "^5.0.1",
+        "bson-objectid": "^2.0.1",
         "connect-mongo": "^4.6.0",
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
         "express-flash": "^0.0.2",
         "express-session": "^1.17.2",
+        "fluent-ffmpeg": "^2.1.2",
+        "fs": "^0.0.1-security",
+        "i": "^0.3.7",
         "mongoose": "^6.0.7",
         "morgan": "^1.10.0",
         "multer": "^1.4.3",
         "node-fetch": "^2.6.1",
+        "npm": "^8.1.1",
         "pug": "^3.0.2",
         "regenerator-runtime": "^0.13.9"
     },
@@ -54,6 +59,6 @@
     },
     "engines": {
         "node": "v14.17.3",
-        "npm":"8.0.0"
+        "npm": "8.0.0"
     }
 }

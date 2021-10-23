@@ -24,9 +24,16 @@ block content
 
     div.video__data
         h1.video__title=video.title
+        div.video__description
+            p=video.description
         div.video__owner Uploaded by
             a(href=`/users/${video.owner._id}`)=video.owner.name
-        small.video__createdAt=new Date(video.createdAt).toLocaleDateString("ko-kr")
+            small.video__createdAt=`• ${new Date(video.createdAt).toLocaleDateString("ko-kr")}`
+        div
+            ul 
+                each hashtag in video.hashtags
+                    li=hashtag
+
         //- , {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})
         
         if String(video.owner._id) === String(loggedInUser._id) 

@@ -3,6 +3,8 @@ import { async } from "regenerator-runtime";
 import User from "../models/User";
 import Video from "../models/Video";
 import Comment from "../models/Comment";
+import ffmpeg from "fluent-ffmpeg";
+import ObjectId from "bson-objectid"
 
 // export const home = async (req, res) => {
 //     Video.find({}, (error, videos) => {
@@ -34,7 +36,7 @@ export const getEdit = async(req, res) => {
         user: {_id}
     } = req.session;
     if (!video) {
-        return res.status(404).render("404", { pageTitle: "Video not found." });
+        return res.status(404).render("404", { pageTitle: "Video not found.", err: "Video not found." });
     }
     if(String(video.owner) !== String(_id)){
         return res.status(403).redirect("/");
@@ -44,26 +46,27 @@ export const getEdit = async(req, res) => {
 
 export const postEdit = async(req, res) => {
     const {
-        user: {_id}
-    } = req.session;
-    const { id } = req.params;
-    const { title, description, hashtags } = req.body;
-    const video = await Video.exists({ _id: id });
-    if (!video) {
-        return res.status(404).render("404", { pageTitle: "Video not found." });
-    }
-
-    if(String(video.owner) !== String(_id)){
-        req.flash("error", "Not authorized");
+        user: { _id },
+      } = req.session;
+      const { id } = req.params;
+      const { title, description, hashtags } = req.body;
+      const video = await Video.findById(id);
+      if (!video) {
+        return res.status(404).render("404", { pageTitle: "Video not found.", err: "Video not found." });
+      }
+      console.log (String(video.owner)) ;
+      console.log (_id);
+      if (String(video.owner) !== String(_id)) {
+        req.flash("error", "You are not the the owner of the video.");
         return res.status(403).redirect("/");
-    }
-
-    await Video.findByIdAndUpdate(id, {
+      }
+      await Video.findByIdAndUpdate(id, {
         title,
         description,
         hashtags: Video.formatHashtags(hashtags),
-    });
-    return res.redirect(`/videos/${id}`);
+      });
+      req.flash("success", "Changes saved.");
+      return res.redirect(`/videos/${id}`);
 };
 
 export const getUpload = (req, res) => {
@@ -74,6 +77,7 @@ export const postUpload = async(req, res) => {
     const {
         user: {_id},
     } = req.session;
+    console.log(req.file);
     const { path: fileUrl } = req.file;
     const { title, description, hashtags } = req.body;
     
@@ -85,35 +89,34 @@ export const postUpload = async(req, res) => {
             owner: _id,
             hashtags: Video.formatHashtags(hashtags)
         });
-        // video를 생성할 때 user의 video object에도 넣어준다.
+        
         const user = await User.findById(_id);
         user.videos.push(newVideo._id);
         user.save();
+        // return res.redirect("/");
+        return res.status(201).json({ fileUrl: fileUrl });
+        
     } catch (error) {
         console.log(error);
-        return res.status(400).render("upload", {
+        return res.status(400).json({ 
             pageTitle: "Upload Video",
             errorMessage: `😓 ${error._message}`
         });
     };
-    return res.redirect("/");
 };
-
+    
 export const deleteVideo = async(req, res) => {
+    const { id } = req.params;
     const {
-        user: {_id}
+        user: { _id },
     } = req.session;
-
-    const video = await Video.findById(_id);
-    if(!video){
-        return res.status(404).render("404", { pageTitle: "Video not found." });
+    const video = await Video.findById(id);
+    if (!video) {
+        return res.status(404).render("404", { pageTitle: "Video not found.", err: "Video not found." });
     }
-
-    if(String(video.owner) !== String(_id)){
+    if (String(video.owner) !== String(_id)) {
         return res.status(403).redirect("/");
     }
-
-    const { id } = req.params;
     await Video.findByIdAndDelete(id);
     return res.redirect("/");
 };
@@ -169,3 +172,35 @@ export const deleteComment = async(req, res) => {
 
     return res.status(201).json({ delCommentId: id});
 };
+
+export const getThumnail = (req, res) => {
+    let thumbUrl = "";
+    let fileDuration = "";
+    const {fileUrl, fileName} = req.body;
+
+    // thumbnail working
+    ffmpeg.ffprobe(fileUrl, function (err, metadata){
+        fileDuration = metadata.format.duration;
+        if(err){
+            console.log(err._message);
+        }
+    });
+
+    ffmpeg(fileUrl).on('filenames', function(filenames){
+        console.log('generate ', filenames.json(","));
+        console.log("filenames: ", filenames);
+        thumbPath= `uploads/thumbnails/${filenames[0]}`;
+    })
+    .on("end", function() {
+        console.log("Screenshots taken");
+        return res.status(201).json({
+            thumbUrl,
+            fileDuration,
+        });
+    })
+    .on("error", function(err) {
+        console.log(err);
+        return res.status(500).json({err: err._message});
+    })
+
+}

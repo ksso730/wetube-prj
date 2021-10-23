@@ -153,7 +153,7 @@ export const seeProfile = async(req, res) => {
         return res.status(400).render("404", {pageTitle: "User not found."});
     }
 
-    return res.render("users/profile", {pageTitle: `${user.name} 's room`, user});
+    return res.render("users/profile", {pageTitle: `${user.name}'s SyTube`, user});
 }
 
 export const startGithubLogin = (req, res) => {
