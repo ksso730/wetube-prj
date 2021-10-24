@@ -9,7 +9,7 @@ header
                 if loggedInUser.avatarUrl === ""
                     span 🤗
                 else
-                    if loggedInUser.socialOnly
+                    if loggedInUser.avatarUrl.includes("github")
                         span Welcome #{loggedInUser.name}
                         img.header__avatar(src=loggedInUser.avatarUrl)
                     else
