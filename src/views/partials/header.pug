@@ -5,7 +5,16 @@ header
         span.header__txt SyTube
     div.my__profile
         if loggedIn
-            span Welcome #{loggedInUser.name} 💖
+            a(href=`/users/${loggedInUser._id}`)
+                if loggedInUser.avatarUrl === ""
+                    span 🤗
+                else
+                    if loggedInUser.socialOnly
+                        span Welcome #{loggedInUser.name}
+                        img.header__avatar(src=loggedInUser.avatarUrl)
+                    else
+                        span Welcome #{loggedInUser.name}
+                        img.header__avatar(src="/"+ loggedInUser.avatarUrl)
     nav 
         ul
             li
