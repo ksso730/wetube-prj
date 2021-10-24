@@ -45,7 +45,6 @@ const delComment = (id) => {
 }
 
 const handleSubmit = async(e) => {
-    // submit이벤트의 기본동작을 막음
     e.preventDefault();
     const textarea = form.querySelector("textarea");
     const text = textarea.value;

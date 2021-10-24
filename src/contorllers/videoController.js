@@ -6,12 +6,6 @@ import Comment from "../models/Comment";
 import ffmpeg from "fluent-ffmpeg";
 import ObjectId from "bson-objectid"
 
-// export const home = async (req, res) => {
-//     Video.find({}, (error, videos) => {
-//         return res.render("home", {pageTitle: "Home", videos: []});
-//     });
-// }
-
 export const home = async(req, res) => {
     const videos = await Video.find({}).sort({ createdAt: "desc" });
     return res.render("home", { pageTitle: "Home", videos });
@@ -19,7 +13,6 @@ export const home = async(req, res) => {
 
 export const watch = async(req, res) => {
     const { id } = req.params;
-    // populate("owner") : owner로 포함한 User 정보를 모두 가져온다.
     const video = await Video.findById(id).populate("owner").populate("comments");
 
     if (!video) {
@@ -74,18 +67,21 @@ export const getUpload = (req, res) => {
 }
 
 export const postUpload = async(req, res) => {
+    console.log("postUpload"); 
     const {
         user: {_id},
     } = req.session;
-    console.log(req.file);
-    const { path: fileUrl } = req.file;
+    console.log(req.files);
+    const { video, thumb } = req.files;
+    console.log(video, thumb)
     const { title, description, hashtags } = req.body;
     
     try {
         const newVideo = await Video.create({
             title,
             description,
-            fileUrl,
+            fileUrl: video[0].path,
+            thumbUrl: thumb[0].path,
             owner: _id,
             hashtags: Video.formatHashtags(hashtags)
         });
@@ -93,12 +89,11 @@ export const postUpload = async(req, res) => {
         const user = await User.findById(_id);
         user.videos.push(newVideo._id);
         user.save();
-        // return res.redirect("/");
-        return res.status(201).json({ fileUrl: fileUrl });
+        return res.redirect("/");
         
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ 
+        return res.status(400).render("upload", {
             pageTitle: "Upload Video",
             errorMessage: `😓 ${error._message}`
         });
@@ -162,7 +157,6 @@ export const createComment = async(req, res) => {
       });
       video.comments.push(comment._id);
       video.save();
-      // 사용자가 만든 댓글을 바로 삭제할 수 있도록 . 해당 id 를 바로 보내준다.
       return res.status(201).json({ newCommentId: comment._id });
 }
 
@@ -178,7 +172,6 @@ export const getThumnail = (req, res) => {
     let fileDuration = "";
     const {fileUrl, fileName} = req.body;
 
-    // thumbnail working
     ffmpeg.ffprobe(fileUrl, function (err, metadata){
         fileDuration = metadata.format.duration;
         if(err){

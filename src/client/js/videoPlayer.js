@@ -71,13 +71,11 @@ const handleVolumeChange = (e) => {
 const formatTime = (seconds) =>
     new Date(seconds * 1000).toISOString().substr(11, 8);
 
-// JS는 video가 로드될 때마다 이벤트 호출
 const handleLoadedMetadata = () => {
     totalTime.innerText = formatTime(Math.floor(video.duration));
     timeLine.max = Math.floor(video.duration);
 };
 
-// JS는 video의 시간이 변할대마다 호출
 const handleTimeUpdate = () => {
     currenTime.innerText = formatTime(Math.floor(video.currentTime));
     timeLine.value = Math.floor(video.currentTime);
@@ -131,7 +129,6 @@ playBtn.addEventListener("click", handlePlayClick);
 muteBtn.addEventListener("click", handleMute);
 volumeRange.addEventListener("input", handleVolumeChange);
 
-// meta data(비디오의 가로세로, 이미지들을 제외한 모든 움직이는 데이터)가 로드될때. 
 video.addEventListener("loadedmetadata", handleLoadedMetadata);
 video.addEventListener("timeupdate", handleTimeUpdate);
 timeLine.addEventListener("input", handleTimelineChange);

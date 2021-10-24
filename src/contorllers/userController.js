@@ -1,6 +1,9 @@
 import User from "../models/User";
 import bcrypt from "bcrypt";
 import fetch from "node-fetch"
+import Video from "../models/Video";
+import mongoose from "mongoose";
+import { ObjectID } from 'bson';
 
 
 export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
@@ -8,7 +11,6 @@ export const postJoin = async(req, res) => {
     const { name, username, password, password2, email, location } = req.body;
     const pageTitle = "Join"
     if (password !== password2) {
-        // 브라우저에게 url을 기록하지 말라고 알려주는 방법은 status를 직접 알려주는 것이다.
         return res.status(400).render("join", {
             pageTitle,
             errorMessage: "Password confirmation does not match.",
@@ -53,30 +55,20 @@ export const postEdit = async(req, res) => {
              }
         },
         body: { name, email, username, location},
-        // !이미 있는 데이터라면? 업데이트 할 수없도록 해야한다. (숙제)
         file,
     } = req;
 
     const updatedUser = await User.findByIdAndUpdate( 
         _id, 
         {
-            // file 의 존재여부를 확인
             avatarUrl: file? file.path : avatarUrl,
             name, email, username, location
         },
-        // new: true이면 업데이트 된 데이터를 가져온다. false이면 이전의 데이터.
         { new: true }
     );
-    // user 데이터는 업데이트 되었지만, session도 업데이트 해줘야한다.
     const exists = await User.exists({ $or: [{ username }, { email }] });
     req.session.user = updatedUser;
 
-    // 방법1 session update 
-    // req.session.user = {
-    //     // ...란 밖으로 꺼낸다는 의미. 업데이트하는 것 이외의 데이터는 이미 존재하는것들을 가져와서 넣어준다.
-    //     ...req.session.user,
-    //     name, email, username, location
-    // }
     return res.redirect("/users/edit");
 }
 export const remove = (req, res) => res.send("Remove User");
@@ -102,7 +94,6 @@ export const postLogin = async(req, res) => {
             });
     };
     req.session.loggedIn = true;
-    // session에 정보 추가
     req.session.user = user;
 
     return res.redirect("/");
@@ -148,6 +139,9 @@ export const postChangePw = async(req, res) => {
 export const seeProfile = async(req, res) => {
     const {id} = req.params;
     const user = await User.findById(id).populate("videos");
+    
+    const videos = await Video.find({owner: ObjectID(id)}).sort({ createdAt: "desc" });
+    user.videos = videos;
     if(!user){
         req.flash("error", "Not authorized.");
         return res.status(400).render("404", {pageTitle: "User not found."});
@@ -162,21 +156,13 @@ export const startGithubLogin = (req, res) => {
         client_id: process.env.GH_CLIENT,
         allow_signup: false,
         scope: "read:user user:email"
-            //  read:user	Grants access to read a user's profile data.
-            //  user:email	Grants read access to a user's email addresses.
-            //  user:follow	Grants access to follow or unfollow other users.
     }
     const params = new URLSearchParams(config).toString();
     const finalUrl = `${baseUrl}?${params}`;
     return res.redirect(finalUrl);
-    // 인증이 완료되면 OAuth applicasdtion settings에 설정한 Authorization callback URL로 이동
-    // URL: users/github/finish
 };
 
-// step 2. Users are redirected back to your site by GitHub
-// >> users/github/finish
 export const finishGithubLogin = async(req, res) => {
-    // access_token 얻기
     const baseUrl = `https://github.com/login/oauth/access_token`;
     const config = {
         client_id: process.env.GH_CLIENT,
@@ -193,11 +179,7 @@ export const finishGithubLogin = async(req, res) => {
             },
         })
     ).json();
-    // = res.send(JSON.stringify(json));
-    // result : {"access_token":"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",
-    //           "token_type":"bearer","scope":"read:user,user:email"}
 
-    // access_token 으로 user정보를 가져온다.
     if ("access_token" in tokenRequest) {
         const { access_token } = tokenRequest;
         const apiUrl = "https://api.github.com"
@@ -217,7 +199,6 @@ export const finishGithubLogin = async(req, res) => {
             })
         ).json();
 
-        // 접근권한 증명
         const emailObj = emailData.find(
             (email) => email.primary == true && email.verified == true
         );
@@ -225,7 +206,6 @@ export const finishGithubLogin = async(req, res) => {
             return res.redirect("/login");
         }
         let user = await User.findOne({ email: emailObj.email });
-        // 기존 이용자가 아니면, 비밀번호 없이 새로생성. socialOnly: true
         if (!user) {
             user = await User.create({
                 avatarUrl: userData.avatar_url,

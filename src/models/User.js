@@ -15,7 +15,6 @@ const userSchema = new mongoose.Schema({
 
 userSchema.pre('save', async function() {
     if(this.isModified("password")){
-        // 비밀번호 hashing
         this.password = await bcrypt.hash(this.password, 5);
     }
 });

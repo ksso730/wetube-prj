@@ -1,4 +1,5 @@
 import multer from "multer";
+import multerS3 from "multer-s3";
 
 export const localsMiddleware = (req, res, next) => {
     res.locals.siteName = "Wetube";
@@ -41,4 +42,5 @@ export const videoUpload = multer({
     limits: {
         fileSize: 1000000000,
     },
+    // storage: isHeroku ? s3VideoUploader : undefined,
 })

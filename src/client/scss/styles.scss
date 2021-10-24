@@ -3,8 +3,10 @@
 @import "./components/footer.scss";
 @import "./components/header.scss";
 @import "./components/forms.scss";
+@import "./components/home.scss";
 
 @import "./screens/watch.scss";
+@import "./screens/profile.scss";
 
 a {
     color: inherit;
@@ -14,7 +16,7 @@ a {
   body {
     font-family: 'Noto Sans', sans-serif;
     background-color: $bg-color;
-    color: rgb(37, 37, 37);
+    color: rgb(216, 216, 216);
     padding: 50px 100px;
   }
 

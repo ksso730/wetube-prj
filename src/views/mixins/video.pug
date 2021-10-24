@@ -1,7 +1,7 @@
 mixin video(video)
-    div 
-        div.video__title
-            a(href=`/videos/${video.id}` )=video.title
-            //- div.video__thumb(style= `background-image: url${video.thumbUrl}; background-size: cover;`)
-            small • #{video.meta.views} views •
-            small=video.createdAt.toLocaleDateString("ko-kr", {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})
+    div.video__elem
+        a(href=`/videos/${video.id}` )
+            div.video__thumb(style= `background-image: url(/${video.thumbUrl}); background-size: cover;`)
+            span.video__title=video.title
+        small.video__metadata • #{video.meta.views} views
+        small.vidieo__date  • #{video.createdAt.toLocaleDateString("ko-kr", {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}

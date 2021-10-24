@@ -6,6 +6,11 @@ header {
   .my__profile {
     position: absolute;
     right: 20px;
+    span {
+      border: 1px dotted rgb(219, 76, 76);
+      border-radius: 5em;
+      padding: 3px 7px;
+    }
   }
   
   .header__logo{
@@ -20,7 +25,7 @@ header {
           margin-left: 10px;
           font-size: 40px;
           justify-content: space-around;
-          color: rgb(48, 48, 48);
+          color: rgb(231, 231, 231);
           font-weight: bolder;
       }
   }
@@ -31,7 +36,6 @@ header {
       ul {
           display: flex;
           text-decoration: none;
-        //   justify-content: space-evenly;
           list-style: none;
           margin-top: 50px;
           li {

@@ -2,8 +2,11 @@ extends base.pug
 include mixins/video
 
 block content
-    ul
-        each video in videos
-           +video(video)
-        else 
-            li Sorry nothing found.
+    div.video__container
+        ul
+            each video in videos
+                +video(video)
+            else 
+                li Sorry nothing found.
+
+block scripts

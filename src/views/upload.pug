@@ -5,11 +5,12 @@ block content
         span.error__message=errorMsg
     div#form__container
         form(method="POST", enctype="multipart/form-data" name="uploadForm")
-            input(placeholder="File", value="selected file", name="inputName", required).upload__name
+            input(placeholder="File", value="selecte video file", name="inputName", required).upload__name
             label(for="video") Choose Video 
             input(type="file", accept="video/*", id="video", name="video", required).upload__video
-            //- label(for="thumb") Thumbnail File 
-            //- input(type="file", accept="image/*", id="thumb", name="thumb", required)
+            input(placeholder="File", value="select thumbnail image", name="inputThumb", required).upload__name
+            label(for="thumb") Thumbnail File 
+            input(type="file", accept="image/*", id="thumb", name="thumb", required)
             input(name="title", placeholder="Title", required, type="text", maxlength=80)
             input(name="description", placeholder="Description", required, type="text", minlength=2)
             input(name="hashtags", placeholder="Hashtags, separated by comma.", required, type="text")
