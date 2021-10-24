@@ -1,15 +1,37 @@
 import multer from "multer";
 import multerS3 from "multer-s3";
+import aws from "aws-sdk";
+
+const s3 = new aws.S3({
+    credentials: {
+      accessKeyId: process.env.AWS_ID,
+      secretAccessKey: process.env.AWS_SECRET,
+    },
+  });
+
+const isHeroku = process.env.NODE_ENV === "production";
+
+const s3ImageUploader = multerS3({
+  s3: s3,
+  bucket: "sytube/images",
+  acl: "public-read",
+});
+
+const s3VideoUploader = multerS3({
+  s3: s3,
+  bucket: "sytube/videos",
+  acl: "public-read",
+});
+
 
 export const localsMiddleware = (req, res, next) => {
     res.locals.siteName = "Wetube";
     res.locals.loggedIn = Boolean(req.session.loggedIn);
-    // user가 undefined일때
     res.locals.loggedInUser = req.session.user || {};
+    res.locals.isHeroku = isHeroku;
     next();
 }
 
-//로그인한 유저들에게만 로그아웃 페이지 허용
 export const protectorMiddleware = (req, res, next) => {
     if(req.session.loggedIn){
         return next();
@@ -19,12 +41,10 @@ export const protectorMiddleware = (req, res, next) => {
     }
 }
 
-// 로그인하지 않은 유저들에게 필요한 페이지
 export const publicOnlyMiddleware = (req, res, next) => {
     if(!req.session.loggedIn){
         return next();
     }else{
-        // 로그인 상태에서는 login, join페이지에 접속하지 못한다.
         req.flash("error", "Not authorized");
         return res.redirect("/");
     }
@@ -33,8 +53,9 @@ export const publicOnlyMiddleware = (req, res, next) => {
 export const avatarUpload = multer({
     dest : "uploads/avatars/",
     limits: {
-        fileSize: 3000000, //bytes
+        fileSize: 3000000,
     },
+    storage: isHeroku ? s3ImageUploader : undefined,
 })
 
 export const videoUpload = multer({
@@ -42,5 +63,5 @@ export const videoUpload = multer({
     limits: {
         fileSize: 1000000000,
     },
-    // storage: isHeroku ? s3VideoUploader : undefined,
+    storage: isHeroku ? s3VideoUploader : undefined,
 })

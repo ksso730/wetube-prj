@@ -4,7 +4,7 @@ include ../mixins/video
 block content
     div.profile__container
         h1=pageTitle
-        img(src="/"+ loggedInUser.avatarUrl, width="200", height="200").profile__img
+        img(src=loggedInUser.avatarUrl, width="200", height="200").profile__img
     h2 Uploaded Video
     div.video__container
         ul

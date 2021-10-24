@@ -9,12 +9,13 @@ header
                 if loggedInUser.avatarUrl === ""
                     span 🤗
                 else
-                    if loggedInUser.avatarUrl.includes("github")
-                        span Welcome #{loggedInUser.name}
-                        img.header__avatar(src=loggedInUser.avatarUrl)
-                    else
-                        span Welcome #{loggedInUser.name}
-                        img.header__avatar(src="/"+ loggedInUser.avatarUrl)
+                    if loggedInUser.avatarUrl
+                        if loggedInUser.avatarUrl.includes("github")
+                            span Welcome #{loggedInUser.name}
+                            img.header__avatar(src=loggedInUser.avatarUrl)
+                        else
+                            span Welcome #{loggedInUser.name}
+                            img.header__avatar(src=loggedInUser.avatarUrl)
     nav 
         ul
             li

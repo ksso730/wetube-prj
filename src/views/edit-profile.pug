@@ -3,7 +3,7 @@ extends base
 block content
     div#form__container
         form(method="POST", enctype="multipart/form-data")
-            img(src="/"+ loggedInUser.avatarUrl, width="200", height="200").profile__img
+            img(src=loggedInUser.avatarUrl, width="200", height="200").profile__img
             label(for="avatar").avatar__btn Avatar
             input(type="file", id="avatar", name="avatar", accept="image/*")
             input(placeholder="Name", name="name", type="text", required, value=loggedInUser.name)
