@@ -13,8 +13,11 @@ block content
     hr
 
     if videos.length > 0
-        dev
-            each video in videos
-                +video(video)
+        div.video__container
+            ul
+                each video in videos
+                    +video(video)
+                else 
+                    li Sorry nothing found.
     else 
         span Not found data. 
