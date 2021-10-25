@@ -6,5 +6,5 @@
 - PUG
 - webpack
 
-✅ build/deploy on Heroku
+✅ build/deploy using Heroku
  : https://wetube-prj.herokuapp.com/  👈👈
