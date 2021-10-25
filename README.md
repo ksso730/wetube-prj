@@ -5,3 +5,6 @@
 - mongo
 - PUG
 - webpack
+
+✅ build/deploy on Heroku
+ : https://wetube-prj.herokuapp.com/  👈👈
